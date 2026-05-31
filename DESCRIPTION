@@ -23,7 +23,6 @@ Description: Provides a unified workflow for running, classifying, visualizing,
 License: MIT + file LICENSE
 URL: https://github.com/causalfragility-lab/causalfrag
 BugReports: https://github.com/causalfragility-lab/causalfrag/issues
-BugReports: https://github.com/causalfragility-lab/causalfrag/issues
 Encoding: UTF-8
 RoxygenNote: 7.3.3
 Depends:
