@@ -1,0 +1,119 @@
+---
+title: "Getting started with causalfrag"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with causalfrag}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Overview
+
+`causalfrag` provides an AI-assisted interpretation and reporting layer
+over established sensitivity analysis tools for unmeasured confounding in
+observational studies.
+
+> **Important**: Statistical results are always computed by transparent R
+> functions. The LLM assists only in translating those outputs into plain
+> language. The package works fully **offline without an API key**.
+
+## Basic workflow
+
+```{r basic, eval = FALSE}
+library(causalfrag)
+
+# 1. Fit your model
+fit <- lm(mpg ~ am + wt + hp, data = mtcars)
+
+# 2. Run the full sensitivity pipeline
+result <- sens_report(
+  model     = fit,
+  treatment = "am",
+  data      = mtcars
+)
+
+# 3. Print the structured results + fragility flag
+print(result)
+
+# 4. Access the plain-language narrative
+cat(result$narrative)
+```
+
+## Step by step
+
+You can also run each step individually:
+
+```{r stepwise, eval = FALSE}
+library(causalfrag)
+
+fit <- lm(mpg ~ am + wt + hp, data = mtcars)
+
+# Step 1: detect the design
+design <- detect_design(fit)
+
+# Step 2: run sensitivity analysis
+res <- run_sensitivity(fit, treatment = "am", data = mtcars, design = design)
+
+# Step 3: flag fragility
+res <- flag_fragility(res)
+
+# Step 4: interpret (uses LLM if configured, template otherwise)
+res <- interpret_sensitivity(res)
+
+# Step 5: visualize (uses confoundvis if installed)
+plot(res)
+
+# Step 6: generate a report paragraph
+cat(generate_report(res))
+```
+
+## Configuring an LLM provider
+
+By default the package uses template-based narratives. To enable AI-assisted
+interpretation, configure a provider once per session:
+
+```{r llm, eval = FALSE}
+# Anthropic (key from ANTHROPIC_API_KEY environment variable)
+use_llm_provider("anthropic")
+
+# OpenAI
+use_llm_provider("openai")
+
+# Disable explicitly
+use_llm_provider("none")
+```
+
+## Relationship to confoundvis
+
+`confoundvis` (Hait, 2026) provides visualization tools for sensitivity
+analysis. `causalfrag` provides an AI-assisted interpretation and reporting
+layer that can optionally use `confoundvis` graphics as part of a broader
+causal sensitivity workflow.
+
+```{r confoundvis, eval = FALSE}
+# Visualize with confoundvis (if installed)
+visualize_sensitivity(res, engine = "confoundvis")
+```
+
+## References
+
+Frank, K. A. (2000). Impact of a confounding variable on the inference of a
+regression coefficient. *Sociological Methods & Research*, 29(2), 147--194.
+
+Cinelli, C., & Hazlett, C. (2020). Making sense of sensitivity: Extending
+omitted variable bias. *Journal of the Royal Statistical Society: Series B*,
+82(1), 39--67.
+
+VanderWeele, T. J., & Ding, P. (2017). Sensitivity analysis in observational
+research: Introducing the E-value. *Annals of Internal Medicine*, 167(4),
+268--274.
+
+Hait, S. (2026). confoundvis: Visualization tools for sensitivity analysis
+of unmeasured confounding. R package version 0.1.0.
