@@ -1,0 +1,10 @@
+^LICENSE\.md$
+^README\.md$
+^\.github$
+^inst/simulation/.*\.rds$
+^inst/simulation/.*\.pdf$
+^inst/simulation/.*\.png$
+^.*\.Rproj$
+^\.Rproj\.user$
+^CRAN-SUBMISSION$
+^cran-comments\.md$
